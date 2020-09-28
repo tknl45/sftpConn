@@ -26,32 +26,31 @@ namespace SftpConn
             Upload(host, username, password, localPath, remotePath);
         }
 
-        public static int Upload(string host, string username, string password, string localPath=null, string remotePath = null)
+        public static void Upload(string host, string username, string password, string localPath=null, string remotePath = null)
         {  
 
             var connectionInfo = new ConnectionInfo(host, username, new PasswordAuthenticationMethod(username, password));
-            // Upload File
-            using (var client = new SftpClient(connectionInfo)){
-                client.KeepAliveInterval = TimeSpan.FromSeconds(60);
-                client.ConnectionInfo.Timeout = TimeSpan.FromMinutes(180);
-                client.OperationTimeout = TimeSpan.FromMinutes(180);
-                
-                client.Connect();
-                
-                bool connected = client.IsConnected;
-                System.Console.WriteLine("connect ok");
+            
+          
+            var client = new SftpClient(connectionInfo);
+            
+            client.KeepAliveInterval = TimeSpan.FromSeconds(60);
+            client.ConnectionInfo.Timeout = TimeSpan.FromMinutes(180);
+            client.OperationTimeout = TimeSpan.FromMinutes(180);
+            
+            client.Connect();
+            
+            bool connected = client.IsConnected;
+            System.Console.WriteLine("connect ok");
 
-                if(localPath != null && remotePath!= null){
-                    using (var uplfileStream = System.IO.File.OpenRead(localPath)){
-                        client.UploadFile(uplfileStream, remotePath, true);
-                    }
+            if(localPath != null && remotePath!= null){
+                using (var uplfileStream = System.IO.File.OpenRead(localPath)){
+                    client.UploadFile(uplfileStream, remotePath, true);
                 }
-                
-                
-                client.Disconnect();
-                
             }
-            return 0;
+                
+                
+            client.Disconnect();
         }
     }
 }
